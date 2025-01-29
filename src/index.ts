@@ -1,10 +1,13 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { signInSchema, TaskInsertSchema, userSchema } from "./utils/validation";
 import { userMiddleware } from "./middlewares/auth.middleware";
+import cors from "cors"
+
+
 
 const client = new PrismaClient();
 
@@ -20,6 +23,11 @@ declare global {
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 
 app.post("/api/signup", async (req, res) => {
   try {
@@ -48,8 +56,19 @@ app.post("/api/signup", async (req, res) => {
         });
       }
     }
-  } catch (error) {
-    console.error(error);
+  } catch (error:any) {
+    console.log(error);
+    
+
+    //check if it is  zod error
+    if(error.name == "ZodError"){
+      res.status(400).json({
+        message:error.issues[0].message,
+        error
+      });
+      return;
+    }
+
     res.status(400).json({
       message: "Error Creating User!",
       error,
@@ -75,7 +94,7 @@ app.post("/api/signin", async (req, res) => {
           { userId: existingUser.id },
           process.env.JWT_SECRET as Secret,
           {
-            expiresIn: "1h",
+            expiresIn: "24h",
           }
         );
 
@@ -95,8 +114,17 @@ app.post("/api/signin", async (req, res) => {
         message: "No user exists!",
       });
     }
-  } catch (error) {
+  } catch (error:any) {
     console.log(error);
+
+    //check if it is  zod error
+    if(error.name == "ZodError"){
+      res.status(400).json({
+        message:error.issues[0].message,
+        error
+      });
+      return;
+    }
 
     res.status(400).json({
       message: "error",
@@ -123,6 +151,11 @@ app.post("/api/tasks", userMiddleware, async (req, res) => {
         title,
         description,
         userId,
+      },
+      select: {
+        title: true,
+        description: true,
+        completed: true,
       },
     });
     res.status(201).json({
@@ -176,7 +209,7 @@ app.get("/api/tasks", userMiddleware, async (req, res) => {
 
 app.patch("/api/tasks/:id", userMiddleware, async (req, res) => {
   try {
-    const { title, description, completed } = req.body;
+    const { completed } = req.body;
     const id = parseInt(req.params.id);
 
     const updatedTask = await client.task.update({
@@ -185,8 +218,6 @@ app.patch("/api/tasks/:id", userMiddleware, async (req, res) => {
         userId: req.userId,
       },
       data: {
-        title,
-        description,
         completed,
       },
     });
@@ -195,7 +226,14 @@ app.patch("/api/tasks/:id", userMiddleware, async (req, res) => {
       message: "Task updated",
       task: updatedTask,
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error.meta.cause == "Record to update not found.") {
+      res.status(403).json({
+        message: "No tasks with Found!",
+      });
+      return;
+    }
+
     res.status(500).json({
       message: "Something went wrong",
       error,
@@ -203,35 +241,39 @@ app.patch("/api/tasks/:id", userMiddleware, async (req, res) => {
   }
 });
 
-app.delete("/api/tasks/:id",userMiddleware,async(req , res) => {
-
+app.delete("/api/tasks/:id", userMiddleware, async (req, res) => {
   try {
-    
     const id = parseInt(req.params.id);
 
     const deletedTask = await client.task.delete({
-      where:{
+      where: {
         id,
-        userId:req.userId
+        userId: req.userId,
       },
-      select:{
-        title:true,
-        completed:true
-      }
-    })
+      select: {
+        title: true,
+        completed: true,
+      },
+    });
 
     res.status(200).json({
-       message: "Task deleted",
-       task:deletedTask
-    })
+      message: "Task deleted",
+      task: deletedTask,
+    });
+  } catch (error: any) {
+    if (error.meta.cause == "Record to delete does not exist.") {
+      res.status(403).json({
+        message: "No task found to Delete!",
+      });
+      return;
+    }
 
-  } catch (error) {
     res.status(500).json({
       message: "Something went wrong",
       error,
     });
   }
-})
+});
 
 app.listen(3000, () => {
   console.log("server running in port 3000");

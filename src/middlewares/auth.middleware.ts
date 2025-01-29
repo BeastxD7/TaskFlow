@@ -4,7 +4,7 @@ import jwt, { decode, JwtPayload, Secret } from "jsonwebtoken";
 declare global {
   namespace Express {
     interface Request {
-      userId: number ;
+      userId: number;
     }
   }
 }
@@ -26,7 +26,7 @@ export const userMiddleware = function (
 
     const decoded = jwt.verify(
       token as string,
-      process.env.JWT_SECRET as Secret 
+      process.env.JWT_SECRET as Secret
     );
     if (!decode) {
       res.json({
@@ -34,15 +34,14 @@ export const userMiddleware = function (
       });
       return;
     }
-    
+
     req.userId = (decoded as JwtPayload).userId;
-    
 
     next();
   } catch (error) {
     res.status(500).json({
-        message:"something went wrong",
-        error
-    })
+      message: "something went wrong",
+      error,
+    });
   }
 };

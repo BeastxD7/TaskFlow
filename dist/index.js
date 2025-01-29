@@ -19,10 +19,15 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const client_1 = require("@prisma/client");
 const validation_1 = require("./utils/validation");
 const auth_middleware_1 = require("./middlewares/auth.middleware");
+const cors_1 = __importDefault(require("cors"));
 const client = new client_1.PrismaClient();
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use((0, cors_1.default)({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.post("/api/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password } = validation_1.userSchema.parse(req.body);
@@ -49,7 +54,15 @@ app.post("/api/signup", (req, res) => __awaiter(void 0, void 0, void 0, function
         }
     }
     catch (error) {
-        console.error(error);
+        console.log(error);
+        //check if it is  zod error
+        if (error.name == "ZodError") {
+            res.status(400).json({
+                message: error.issues[0].message,
+                error
+            });
+            return;
+        }
         res.status(400).json({
             message: "Error Creating User!",
             error,
@@ -68,7 +81,7 @@ app.post("/api/signin", (req, res) => __awaiter(void 0, void 0, void 0, function
             const isMatched = yield bcrypt_1.default.compare(password, existingUser.password);
             if (isMatched) {
                 const token = jsonwebtoken_1.default.sign({ userId: existingUser.id }, process.env.JWT_SECRET, {
-                    expiresIn: "1h",
+                    expiresIn: "24h",
                 });
                 res.status(200).json({
                     message: "success",
@@ -91,6 +104,14 @@ app.post("/api/signin", (req, res) => __awaiter(void 0, void 0, void 0, function
     }
     catch (error) {
         console.log(error);
+        //check if it is  zod error
+        if (error.name == "ZodError") {
+            res.status(400).json({
+                message: error.issues[0].message,
+                error
+            });
+            return;
+        }
         res.status(400).json({
             message: "error",
             error,
@@ -112,6 +133,11 @@ app.post("/api/tasks", auth_middleware_1.userMiddleware, (req, res) => __awaiter
                 title,
                 description,
                 userId,
+            },
+            select: {
+                title: true,
+                description: true,
+                completed: true,
             },
         });
         res.status(201).json({
@@ -159,7 +185,7 @@ app.get("/api/tasks", auth_middleware_1.userMiddleware, (req, res) => __awaiter(
 }));
 app.patch("/api/tasks/:id", auth_middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { title, description, completed } = req.body;
+        const { completed } = req.body;
         const id = parseInt(req.params.id);
         const updatedTask = yield client.task.update({
             where: {
@@ -167,8 +193,6 @@ app.patch("/api/tasks/:id", auth_middleware_1.userMiddleware, (req, res) => __aw
                 userId: req.userId,
             },
             data: {
-                title,
-                description,
                 completed,
             },
         });
@@ -178,6 +202,12 @@ app.patch("/api/tasks/:id", auth_middleware_1.userMiddleware, (req, res) => __aw
         });
     }
     catch (error) {
+        if (error.meta.cause == "Record to update not found.") {
+            res.status(403).json({
+                message: "No tasks with Found!",
+            });
+            return;
+        }
         res.status(500).json({
             message: "Something went wrong",
             error,
@@ -190,19 +220,25 @@ app.delete("/api/tasks/:id", auth_middleware_1.userMiddleware, (req, res) => __a
         const deletedTask = yield client.task.delete({
             where: {
                 id,
-                userId: req.userId
+                userId: req.userId,
             },
             select: {
                 title: true,
-                completed: true
-            }
+                completed: true,
+            },
         });
         res.status(200).json({
             message: "Task deleted",
-            task: deletedTask
+            task: deletedTask,
         });
     }
     catch (error) {
+        if (error.meta.cause == "Record to delete does not exist.") {
+            res.status(403).json({
+                message: "No task found to Delete!",
+            });
+            return;
+        }
         res.status(500).json({
             message: "Something went wrong",
             error,
