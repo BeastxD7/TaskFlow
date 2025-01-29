@@ -22,10 +22,10 @@ export function SignIn() {
 
       if(response.data.message == "success") {
         localStorage.setItem("token" , response.data.token)
-        navigate("/dashboard")
       }
 
       setResponse(response.data.message);
+      navigate("/dashboard")  
     } catch (error: any) {
       setResponse(error.response.data.message);
     }

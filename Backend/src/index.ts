@@ -187,6 +187,7 @@ app.get("/api/tasks", userMiddleware, async (req, res) => {
       userId,
     },
     select: {
+      id:true,
       title: true,
       description: true,
       completed: true,

@@ -14,5 +14,5 @@ export const signInSchema = z.object({
 
 export const TaskInsertSchema = z.object({
   title: z.string().min(2, "Title must be at least 2 characters long").max(50, "Name cannot exceed 50 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters long").max(200, "Description cannot exceed 50 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters long").max(200, "Description cannot exceed 200 characters"),
 });

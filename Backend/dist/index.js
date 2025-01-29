@@ -166,6 +166,7 @@ app.get("/api/tasks", auth_middleware_1.userMiddleware, (req, res) => __awaiter(
             userId,
         },
         select: {
+            id: true,
             title: true,
             description: true,
             completed: true,

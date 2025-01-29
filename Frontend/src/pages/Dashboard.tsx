@@ -1,7 +1,32 @@
+import axios from "axios"
 import { CheckCircle } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
 const Dashboard = () => {
+
+const token = localStorage.getItem("token")
+const [tasks ,setTasks] = useState()
+
+const fetchTasks = async() => {
+  try {  
+    const response =  await axios.get("http://localhost:3000/api/tasks",{
+      headers:{
+        token
+      }
+    })
+
+    setTasks(response.data.tasks);
+
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+  useEffect( ()=> {
+    fetchTasks()
+  },[])
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900"> 
     <nav className="fixed w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-50 border-b border-gray-200 dark:border-gray-800">
@@ -34,7 +59,11 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </nav>
+    </nav>
+    <div className="text-white pt-16">
+    {JSON.stringify(tasks)}
+    </div>
+    
     </div>
   )
 }
