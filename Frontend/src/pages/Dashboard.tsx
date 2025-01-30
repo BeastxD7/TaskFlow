@@ -2,14 +2,22 @@ import axios from "axios"
 import { CheckCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import TaskCard from "../components/TaskCard"
+import UpdateModal from "../components/UpdateModal"
 
 const Dashboard = () => {
 
 const token = localStorage.getItem("token")
-const [tasks ,setTasks] = useState()
+const [tasks ,setTasks] = useState([])
+const [display,setDisplay] = useState(false)
+
+const toggleDisplay = () => {
+  setDisplay((prev) => !prev)
+}
 
 const fetchTasks = async() => {
   try {  
+
     const response =  await axios.get("http://localhost:3000/api/tasks",{
       headers:{
         token
@@ -18,6 +26,7 @@ const fetchTasks = async() => {
 
     setTasks(response.data.tasks);
 
+    console.log(response);
     
   } catch (error) {
     console.log(error);
@@ -27,8 +36,10 @@ const fetchTasks = async() => {
   useEffect( ()=> {
     fetchTasks()
   },[])
-  return (
-    <div className="min-h-screen bg-white dark:bg-gray-900"> 
+
+  return (<>
+  <UpdateModal display={display} toggleDisplay={()=>{setDisplay(!display)}}/>
+  <div className="min-h-screen bg-white dark:bg-gray-900 "> 
     <nav className="fixed w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-50 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -45,26 +56,38 @@ const fetchTasks = async() => {
                   className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-500 px-3 py-2">
                   Home
                 </Link>
-                <Link
-                  to={"/signin"}
+                <button
+                  onClick={fetchTasks}
                   className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-500 px-3 py-2">
-                  Tasks
-                </Link>
-                <Link
-                  to={"/signup"}
+                  Refresh Tasks
+                </button>
+                <button
+                  onClick={toggleDisplay}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
                   Add Tasks
-                </Link>
+                </button>
               </div>
             </div>
           </div>
         </div>
     </nav>
-    <div className="text-white pt-16">
-    {JSON.stringify(tasks)}
-    </div>
+    <div className="text-white text-center flex flex-wrap gap-5 justify-center pt-28 mt">
+      {tasks.length == 0 && "Loading..." }
+      {tasks.map((task:any)=> {
+          return(
+          <TaskCard
+          status={task.completed}
+          id={task.id}
+          key={task.id}
+          title={task.title}
+          description={task.description}
+        />
+          )
+        })}
+      </div>
     
-    </div>
+    </div></>
+
   )
 }
 

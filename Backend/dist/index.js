@@ -80,9 +80,7 @@ app.post("/api/signin", (req, res) => __awaiter(void 0, void 0, void 0, function
         if (existingUser) {
             const isMatched = yield bcrypt_1.default.compare(password, existingUser.password);
             if (isMatched) {
-                const token = jsonwebtoken_1.default.sign({ userId: existingUser.id }, process.env.JWT_SECRET, {
-                    expiresIn: "24h",
-                });
+                const token = jsonwebtoken_1.default.sign({ userId: existingUser.id }, process.env.JWT_SECRET);
                 res.status(200).json({
                     message: "success",
                     Name: existingUser.name,
@@ -147,6 +145,13 @@ app.post("/api/tasks", auth_middleware_1.userMiddleware, (req, res) => __awaiter
     }
     catch (error) {
         console.log(error);
+        if (error.name == "ZodError") {
+            res.status(400).json({
+                message: error.issues[0].message,
+                error
+            });
+            return;
+        }
         res.status(400).json({
             message: "Error creating task",
             error,
@@ -154,35 +159,52 @@ app.post("/api/tasks", auth_middleware_1.userMiddleware, (req, res) => __awaiter
     }
 }));
 app.get("/api/tasks", auth_middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userId = req.userId;
-    if (!userId) {
-        res.status(500).json({
-            message: "middleware error with req.user",
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            res.status(500).json({
+                message: "middleware error with req.user",
+            });
+            return;
+        }
+        const userTasks = yield client.task.findMany({
+            where: {
+                userId,
+            },
+            select: {
+                id: true,
+                title: true,
+                description: true,
+                completed: true,
+            },
         });
-        return;
-    }
-    const userTasks = yield client.task.findMany({
-        where: {
-            userId,
-        },
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            completed: true,
-        },
-    });
-    if (!userTasks) {
+        if (!userTasks) {
+            res.status(200).json({
+                message: "No Tasks yet!",
+            });
+            return;
+        }
         res.status(200).json({
-            message: "No Tasks yet!",
+            message: "Tasks Found",
+            tasks: userTasks,
         });
         return;
     }
-    res.status(200).json({
-        message: "Tasks Found",
-        tasks: userTasks,
-    });
-    return;
+    catch (error) {
+        console.log(error);
+        //check if it is  zod error
+        if (error.name == "ZodError") {
+            res.status(400).json({
+                message: error.issues[0].message,
+                error
+            });
+            return;
+        }
+        res.status(400).json({
+            message: "error",
+            error,
+        });
+    }
 }));
 app.patch("/api/tasks/:id", auth_middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

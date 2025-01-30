@@ -93,9 +93,6 @@ app.post("/api/signin", async (req, res) => {
         const token = jwt.sign(
           { userId: existingUser.id },
           process.env.JWT_SECRET as Secret,
-          {
-            expiresIn: "24h",
-          }
         );
 
         res.status(200).json({
@@ -162,8 +159,16 @@ app.post("/api/tasks", userMiddleware, async (req, res) => {
       message: "Task created",
       task: createdTask,
     });
-  } catch (error) {
+  } catch (error:any) {
     console.log(error);
+
+    if(error.name == "ZodError"){
+      res.status(400).json({
+        message:error.issues[0].message,
+        error
+      });
+      return;
+    }
 
     res.status(400).json({
       message: "Error creating task",
@@ -173,7 +178,8 @@ app.post("/api/tasks", userMiddleware, async (req, res) => {
 });
 
 app.get("/api/tasks", userMiddleware, async (req, res) => {
-  const userId = req.userId;
+  try {
+    const userId = req.userId;
 
   if (!userId) {
     res.status(500).json({
@@ -206,6 +212,24 @@ app.get("/api/tasks", userMiddleware, async (req, res) => {
     tasks: userTasks,
   });
   return;
+  } catch (error:any) {
+    console.log(error);
+    
+ //check if it is  zod error
+ if(error.name == "ZodError"){
+  res.status(400).json({
+    message:error.issues[0].message,
+    error
+  });
+  return;
+}
+
+res.status(400).json({
+  message: "error",
+  error,
+});
+
+  }
 });
 
 app.patch("/api/tasks/:id", userMiddleware, async (req, res) => {
