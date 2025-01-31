@@ -1,133 +1,114 @@
-# Task Manager App 🖍
+# TaskFlow
 
-A full-stack **Task Manager App** built with the following technologies:
+TaskFlow is a full-stack task management application that allows multiple users to create, update, delete, and manage their tasks efficiently. Built with modern web technologies, it provides a seamless experience for organizing tasks.
 
-- **Backend**: Node.js, Express, Prisma, PostgreSQL, JWT, Bcrypt
-- **Frontend**: React (with Vite), Tailwind CSS, TypeScript
+## 🚀 Tech Stack
 
-This app allows users to **create, read, update, and delete tasks** while ensuring authentication and data privacy for multiple users.
+- **Frontend:** React (Vite), TypeScript, Tailwind CSS
+- **Backend:** Node.js, Express.js
+- **Database:** PostgreSQL with Prisma ORM
+- **Authentication:** JWT (JSON Web Token)
+- **Real-time Updates:** WebSockets (optional)
 
----
+## 📌 Features
 
-## 🚀 Features
+✅ User Authentication (Sign-up & Sign-in with JWT)
+✅ Task CRUD Operations (Create, Read, Update, Delete)
+✅ Protected Routes (Only authenticated users can access tasks)
+✅ Responsive UI with Dark Mode Toggle
+✅ Error Handling & Validation with Zod
+✅ Secure API with JWT Middleware
 
-- **User Authentication**: Secure sign-up and log-in with password hashing (Bcrypt) and token-based authentication (JWT).
-- **Task Management**:
-  - Create, edit, and delete tasks.
-  - View all tasks associated with the logged-in user.
-- **Backend Validation**: All inputs validated with **Zod** for secure and clean data handling.
-- **Protected Routes**: Only authenticated users can access the task management functionality.
-
----
-
-## 🛠 Tech Stack
-
-### Backend:
-
-- **Node.js**
-- **Express.js**
-- **Prisma ORM**
-- **PostgreSQL**
-- **JWT** for authentication
-- **Bcrypt** for password hashing
-
-### Frontend (to be implemented):
-
-- **React** (with Vite for fast development)
-- **Tailwind CSS** for styling
-- **TypeScript** for type safety
-
----
-
-## 🔧 Project Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/BeastxD7/task-manager-prisma.git
-cd task-manager-prisma
+## 📂 Folder Structure
+```
+TaskFlow/
+├── backend/                # Express.js backend
+│   ├── prisma/             # Prisma schema & migrations
+│   ├── routes/             # API routes (auth, tasks)
+│   ├── middleware/         # JWT authentication middleware
+│   ├── index.ts            # Express server entry point
+│
+├── frontend/               # React frontend
+│   ├── src/
+│   │   ├── pages/          # Dashboard, Landing, Auth Pages
+│   │   ├── components/     # Reusable UI components
+│   │   ├── utils/          # API requests & validation
+│   │   ├── App.tsx         # Main app component
+│
+├── .env                    # Environment variables
+├── package.json            # Dependencies & scripts
+├── README.md               # Project documentation
 ```
 
-### 2. Set Up the Backend
+## 🛠️ Installation & Setup
 
-#### Install Dependencies
-
-```bash
-cd backend
-npm install
+1. **Clone the repository**
+```sh
+ git clone https://github.com/BeastxD7/TaskFlow.git
+ cd taskflow
 ```
 
-#### Set Environment Variables
+2. **Set up the backend**
+```sh
+ cd backend
+ npm install
+```
+- Configure `.env` with your PostgreSQL URL & JWT secret.
+- Run Prisma migrations:
+```sh
+ npx prisma migrate dev
+ npx prisma generate
+```
+- Start the backend server:
+```sh
+ npm run dev
+```
 
-Create a `.env` file in the `backend` directory:
+3. **Set up the frontend**
+```sh
+ cd ../frontend
+ npm install
+ npm run dev
+```
 
-```env
-DATABASE_URL="postgresql://username:password@localhost:5432/task_manager"
-JWT_SECRET="your_jwt_secret"
+## 🔑 Environment Variables
+Create a `.env` file in the backend folder with:
+```
+DATABASE_URL=postgresql://your_db_url
+JWT_SECRET=your_secret_key
 SALT=6
 ```
 
-#### Run Prisma Migrations
+## 🚀 Running the App
+- Open **`http://localhost:5173`** for the frontend.
+- The backend runs on **`http://localhost:3000`**.
 
-```bash
-npx prisma migrate dev
-```
+## 📜 API Endpoints
+### **Authentication**
+| Method | Endpoint      | Description        |
+|--------|-------------|--------------------|
+| POST   | /api/signup  | Register new user |
+| POST   | /api/signin  | Authenticate user |
 
-#### Start the Server
+### **Tasks**
+| Method | Endpoint        | Description       |
+|--------|----------------|-------------------|
+| GET    | /api/tasks      | Get all tasks    |
+| POST   | /api/tasks      | Create a task    |
+| PUT    | /api/tasks/:id  | Update a task    |
+| DELETE | /api/tasks/:id  | Delete a task    |
 
-```bash
-npm run dev
-```
+## 🎯 Future Enhancements
+🔹 Task prioritization (High, Medium, Low)  
+🔹 Drag & Drop Task Sorting  
+🔹 Real-time Task Updates using WebSockets  
 
----
+## 🙌 Contributing
+Feel free to contribute! Open an issue or submit a PR.
 
-### 3. Set Up the Frontend (Coming Soon)
-
-The React frontend will handle user authentication and task management. Stay tuned for updates!
-
----
-
-## 📂 Folder Structure
-
-```
-task-manager/
-├── backend/               # Backend code (Node.js + Express)
-│   ├── prisma/            # Prisma schema and migrations
-│   ├── src/               # Source files
-│   ├── .env               # Environment variables
-│   ├── package.json       # Backend dependencies
-│   └── index.ts          # Entry point for the backend server
-└── frontend/              # Frontend code (React + Vite) [Coming Soon]
-```
-
----
-
-## ✨ How to Contribute
-
-1. Fork the repo.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Make your changes and commit:
-   ```bash
-   git commit -m "Add feature"
-   ```
-4. Push your branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Open a pull request.
-
----
-
-## 🖍 License
-
+## 📄 License
 This project is licensed under the MIT License.
 
 ---
-
-## 📧 Contact
-
-For any questions or suggestions, feel free to reach out at [**shashankdevadiga2003@gmail.com**](mailto\:shashankdevadiga2003@gmail.com).
+Made with ❤️ by YourName
 
