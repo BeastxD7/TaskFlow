@@ -106,7 +106,9 @@ const Dashboard = () => {
 
         <div className="text-white text-center flex flex-wrap gap-5 justify-center pt-20 mt">
           {token ? "" : "Login First"}
+
           {tasks && tasks.length < 1 ? "No contents yet! " : ""}
+          <div className="w-full flex justify-center">{message}</div>
           <div className="w-full"></div>
           {tasks &&
             tasks.map((task: any) => {
