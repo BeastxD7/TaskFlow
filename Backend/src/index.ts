@@ -300,6 +300,11 @@ app.delete("/api/tasks/:id", userMiddleware, async (req, res) => {
   }
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is running" });
+});
+
+
 app.listen(3000, () => {
   console.log("server running in port 3000");
 });
