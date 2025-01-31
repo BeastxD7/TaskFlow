@@ -1,4 +1,5 @@
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface propsType {
     title:string;
@@ -14,7 +15,7 @@ const completeTask = async (id:number,refreshTasks:()=>void) => {
   let response;
   try {
     response = await axios.patch(
-      `http://localhost:3000/api/tasks/${id}`,
+      `${apiUrl}/tasks/${id}`,
       {
         completed:true
       },
@@ -36,7 +37,7 @@ const deleteTask = async (id:number, refreshTasks:()=>void) => {
 
   try {
     response = await axios.delete(
-      `http://localhost:3000/api/tasks/${id}`,
+      `${apiUrl}/tasks/${id}`,
       {
         headers: {
           token: token ? `${token}` : "",

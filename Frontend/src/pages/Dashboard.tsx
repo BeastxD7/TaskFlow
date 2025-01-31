@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [display, setDisplay] = useState(false);
   const [message, setMessages] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const toggleDisplay = () => {
     setDisplay((prev) => !prev);
@@ -18,7 +19,7 @@ const Dashboard = () => {
   const fetchTasks = async () => {
     try {
       setMessages("Loading...");
-      const response = await axios.get("http://localhost:3000/api/tasks", {
+      const response = await axios.get(`${apiUrl}/tasks`, {
         headers: { token },
       });
 

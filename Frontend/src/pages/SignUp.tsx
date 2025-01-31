@@ -2,6 +2,7 @@ import axios from "axios";
 import { Mail, Lock, User, ArrowRight } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export function SignUp() {
   const nameRef = useRef<HTMLInputElement>(null);
@@ -12,7 +13,7 @@ export function SignUp() {
   const createAccount = async () => {
     try {
       const response: any = await axios.post(
-        "http://localhost:3000/api/signup",
+        `${apiUrl}/signup`,
         {
           name: nameRef.current?.value,
           email: emailRef.current?.value,

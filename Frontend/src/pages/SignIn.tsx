@@ -8,12 +8,13 @@ export function SignIn() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const [response, setResponse] = useState("");
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const loginAccount = async () => {
     try {
       setResponse("Loading....");
       const response: any = await axios.post(
-        "http://localhost:3000/api/signin",
+        `${apiUrl}/signin`,
         {
           email: emailRef.current?.value,
           password: passwordRef.current?.value,

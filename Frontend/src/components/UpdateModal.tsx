@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface UpdateModalProps {
   display: boolean;
@@ -18,7 +19,7 @@ const UpdateModal = ({ display, toggleDisplay ,refreshTasks}: UpdateModalProps) 
     let response;
     try {
       response = await axios.post(
-        "http://localhost:3000/api/tasks",
+        `${apiUrl}/tasks`,
         {
           title: titleRef.current?.value,
           description: descRef.current?.value,
