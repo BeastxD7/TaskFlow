@@ -110,5 +110,5 @@ Feel free to contribute! Open an issue or submit a PR.
 This project is licensed under the MIT License.
 
 ---
-Made with ❤️ by YourName
+Made with ❤️ by Beast
 
