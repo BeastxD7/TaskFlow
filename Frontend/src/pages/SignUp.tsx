@@ -38,7 +38,7 @@ export function SignUp() {
           </p>
         </div>
 
-        <h1 className="text-white">{response}</h1>
+        <h1 className=" text-center text-blue-200">{response}</h1>
 
         <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
           <div className="space-y-4">

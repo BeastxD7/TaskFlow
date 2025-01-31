@@ -7,11 +7,11 @@ export function SignIn() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const [response, setResponse] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const loginAccount = async () => {
     try {
-      setResponse("Loading....")
+      setResponse("Loading....");
       const response: any = await axios.post(
         "http://localhost:3000/api/signin",
         {
@@ -20,12 +20,12 @@ export function SignIn() {
         }
       );
 
-      if(response.data.message == "success") {
-        localStorage.setItem("token" , response.data.token)
+      if (response.data.message == "success") {
+        localStorage.setItem("token", response.data.token);
       }
 
       setResponse(response.data.message);
-      navigate("/dashboard")  
+      navigate("/dashboard");
     } catch (error: any) {
       setResponse(error.response.data.message);
     }
@@ -47,7 +47,6 @@ export function SignIn() {
 
         <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
           <div className="space-y-4">
-
             <div>
               <label
                 htmlFor="email"
@@ -122,14 +121,15 @@ export function SignIn() {
             </div>
           </div>
 
-          <Link to={"/signup"}
+          <Link
+            to={"/signup"}
             className="mt-4 w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600
                      text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800
                      hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2
                      focus:ring-blue-500 transition-colors">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Create new account
-          </Link >
+          </Link>
         </div>
       </div>
     </div>

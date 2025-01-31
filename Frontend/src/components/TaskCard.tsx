@@ -4,12 +4,13 @@ interface propsType {
     title:string;
     description:string;
     id:number
-    status:boolean
+    status?:boolean
+    refreshTasks:()=> void
 }
 
 const token = localStorage.getItem("token")
 
-const completeTask = async (id:number) => {
+const completeTask = async (id:number,refreshTasks:()=>void) => {
   let response;
   try {
     response = await axios.patch(
@@ -24,21 +25,18 @@ const completeTask = async (id:number) => {
       }
     );  
     alert(response.data.message);
+    refreshTasks();
   } catch (error: any) {
     alert(error.response.data.message);
   }
 };
 
-const deleteTask = async (id:number) => {
+const deleteTask = async (id:number, refreshTasks:()=>void) => {
   let response;
 
   try {
     response = await axios.delete(
       `http://localhost:3000/api/tasks/${id}`,
-      // {
-      //   title: titleRef.current?.value,
-      //   description: descRef.current?.value,
-      // },
       {
         headers: {
           token: token ? `${token}` : "",
@@ -46,6 +44,7 @@ const deleteTask = async (id:number) => {
       }
     );  
     alert(response.data.message);
+    refreshTasks()
   } catch (error: any) {
     alert(error.response.data.message);
   }
@@ -61,13 +60,12 @@ const TaskCard = (props:propsType) => {
         <p className='py-3 px-2 text-center mb-3'>{props.description}</p>
 
         <div className="flex justify-between px-3">
-        <button onClick={()=>{props.status ? null : completeTask(props.id) }} className={`${props.status ? "bg-green-600" : "bg-yellow-600"} py-2 text-sm cursor-pointer px-2 rounded-md`}>{props.status ? "Completed" : "Mark Complete"}</button>
-        <img onClick={()=>{deleteTask(props.id);}} className="w-6 cursor-pointer " src="./delete.svg" alt="logo"  />
+        <button onClick={()=>{props.status ? null : completeTask(props.id , props.refreshTasks) }} className={`${props.status ? "bg-green-600" : "bg-yellow-600"} py-2 text-sm cursor-pointer px-2 rounded-md`}>{props.status ? "Completed" : "Mark Complete"}</button>
+        <img onClick={()=>{deleteTask(props.id , props.refreshTasks);}} className="w-6 cursor-pointer" src="./delete.svg" alt="logo"  />
 
         </div>
     </div>
     
   )
 }
-
 export default TaskCard

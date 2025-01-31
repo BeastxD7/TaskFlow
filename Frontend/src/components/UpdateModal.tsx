@@ -4,13 +4,15 @@ import axios from "axios";
 interface UpdateModalProps {
   display: boolean;
   toggleDisplay: () => void;
+  refreshTasks: () => void;
 }
 
-const UpdateModal = ({ display, toggleDisplay }: UpdateModalProps) => {
+const UpdateModal = ({ display, toggleDisplay ,refreshTasks}: UpdateModalProps) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("token");
+
 
   const addTask = async () => {
     let response;
@@ -29,6 +31,8 @@ const UpdateModal = ({ display, toggleDisplay }: UpdateModalProps) => {
       );
 
       setMessage(response.data.message);
+      toggleDisplay();
+      refreshTasks();
     } catch (error: any) {
       setMessage(error.response.data.message);
     }
