@@ -25,7 +25,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173", "https://taskflowbybeast.vercel.app/"],
+    origin: ["http://localhost:5173", "https://taskflow-k0es.onrender.com"],
     credentials: true
 }));
 app.post("/api/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,7 +63,7 @@ app.post("/api/signup", (req, res) => __awaiter(void 0, void 0, void 0, function
             });
             return;
         }
-        //check if it is prisma error
+        //check if it is prisma email error
         if (error.name == "PrismaClientKnownRequestError") {
             if (error.meta.target[0] == "email") {
                 res.status(400).json({
