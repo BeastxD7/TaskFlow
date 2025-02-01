@@ -21,7 +21,7 @@ const completeTask = async (id:number,refreshTasks:()=>void) => {
       },
       {
         headers: {
-          token: token ? `${token}` : "",
+          token: token ? token : "",
         },
       }
     );  
