@@ -25,7 +25,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://taskflow-k0es.onrender.com"],
     credentials: true
 }));
 app.post("/api/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -268,6 +268,9 @@ app.delete("/api/tasks/:id", auth_middleware_1.userMiddleware, (req, res) => __a
         });
     }
 }));
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok", message: "Server is running" });
+});
 app.listen(3000, () => {
     console.log("server running in port 3000");
 });
