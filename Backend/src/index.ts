@@ -69,6 +69,18 @@ app.post("/api/signup", async (req, res) => {
       return;
     }
 
+    //check if it is prisma email error
+    if(error.name == "PrismaClientKnownRequestError"){
+
+      if(error.meta.target[0] == "email"){
+        res.status(400).json({
+          message:"Email Already Exists!",
+          error
+        });
+      }  
+      return;
+    }
+
     res.status(400).json({
       message: "Error Creating User!",
       error,
@@ -171,7 +183,7 @@ app.post("/api/tasks", userMiddleware, async (req, res) => {
     }
 
     res.status(400).json({
-      message: "Error creating task",
+      message: "Error creating task | Email already exists!",
       error,
     });
   }

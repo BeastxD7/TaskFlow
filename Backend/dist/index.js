@@ -25,7 +25,7 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173", "https://taskflow-k0es.onrender.com"],
+    origin: ["http://localhost:5173", "https://taskflowbybeast.vercel.app/"],
     credentials: true
 }));
 app.post("/api/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,6 +61,16 @@ app.post("/api/signup", (req, res) => __awaiter(void 0, void 0, void 0, function
                 message: error.issues[0].message,
                 error
             });
+            return;
+        }
+        //check if it is prisma error
+        if (error.name == "PrismaClientKnownRequestError") {
+            if (error.meta.target[0] == "email") {
+                res.status(400).json({
+                    message: "Email Already Exists!",
+                    error
+                });
+            }
             return;
         }
         res.status(400).json({
@@ -153,7 +163,7 @@ app.post("/api/tasks", auth_middleware_1.userMiddleware, (req, res) => __awaiter
             return;
         }
         res.status(400).json({
-            message: "Error creating task",
+            message: "Error creating task | Email already exists!",
             error,
         });
     }
