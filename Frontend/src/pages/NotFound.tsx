@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-
+import { ToastContainer,toast } from "react-toastify";
 const NotFound = () => {
   let token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -7,15 +7,20 @@ const NotFound = () => {
   const logOut = () => {
     try {
       localStorage.setItem("token", "");
-      alert("You have been Logged Out!");
-      navigate("/signin");
+      toast.success(`You have been Logged Out!`,{
+             position: 'bottom-right',
+          });
+      const timeout = setTimeout(( )=> {
+        navigate("/signin");
+      }, 5000)
+      return () => clearTimeout(timeout);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <>
+    <><ToastContainer/>
       <div className="min-h-screen bg-white bg-gradient-to-r from-slate-900 to-gray-950 ">
         <nav className="fixed w-full bg-white/80 dark:bg-gray-900/50 backdrop-blur-sm z-50 border-b border-gray-200 dark:border-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

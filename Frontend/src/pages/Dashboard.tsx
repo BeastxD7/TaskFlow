@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import TaskCard from "../components/TaskCard";
 import UpdateModal from "../components/UpdateModal";
+import { ToastContainer,toast } from "react-toastify";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -33,8 +34,14 @@ const Dashboard = () => {
   const logOut = () => {
     try {
       localStorage.setItem("token", "");
-      alert("You have been Logged Out!");
-      navigate("/signin");
+      toast.success(`You have been Logged Out!`,{
+        position: 'bottom-right',
+     });
+       
+      const timeout = setTimeout(() => {
+        navigate("/signin");
+      }, 5000);
+      return () => clearTimeout(timeout);
     } catch (error) {
       console.log(error);
     }
@@ -46,6 +53,7 @@ const Dashboard = () => {
 
   return (
     <>
+    <ToastContainer autoClose={4000}/>
       <UpdateModal
         display={display}
         toggleDisplay={() => {
@@ -76,7 +84,7 @@ const Dashboard = () => {
                   </Link>
                   <button
                     onClick={toggleDisplay}
-                    className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    className={token ? "bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors" : "hidden"}>
                     Add Tasks
                   </button>
 
@@ -104,8 +112,10 @@ const Dashboard = () => {
           </div>
         </nav>
 
-        <div className="text-white text-center flex flex-wrap gap-5 justify-center pt-20 mt">
-          {token ? "" : "Login First"}
+        <div className={token ? "text-white text-center flex flex-wrap gap-5 justify-center pt-20 mt" :"text-white text-center flex flex-wrap gap-5 justify-center pt-20 mt h-screen" }>
+          <div className={token ? "hidden" : "flex h-full justify-center items-center"}>
+          {token ? "" : "Login First to Add Tasks!"}
+          </div>
 
           {tasks && tasks.length < 1 ? "No contents yet! " : ""}
           <div className="w-full flex justify-center">{message}</div>
@@ -123,7 +133,7 @@ const Dashboard = () => {
                 />
               );
             })}
-          <div className="w-[90%] max-h-72 h-fit pb-3 sm:w-80 bg-gray-700 rounded-lg ">
+          <div className={token ? "w-[90%] max-h-72 h-fit pb-3 sm:w-80 bg-gray-700 rounded-lg" : "hidden"}>
             <div className="flex  justify-between items-center border-b-[1px] border-gray-500 px-5">
               <h1 className="text-start  font-semibold  py-2">
                 Don't see your Task?
