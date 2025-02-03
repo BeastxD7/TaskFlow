@@ -13,10 +13,15 @@ TaskFlow is a full-stack task management application that allows multiple users 
 ## 📌 Features
 
 ✅ User Authentication (Sign-up & Sign-in with JWT)
+
 ✅ Task CRUD Operations (Create, Read, Update, Delete)
+
 ✅ Protected Routes (Only authenticated users can access tasks)
+
 ✅ Responsive UI with Dark Mode Toggle
+
 ✅ Error Handling & Validation with Zod
+
 ✅ Secure API with JWT Middleware
 
 ## 📂 Folder Structure
